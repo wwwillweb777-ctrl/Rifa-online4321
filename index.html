@@ -201,7 +201,7 @@
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-300 mb-2">Escolha um número (1 a 10)</label>
-                    <input type="number" id="numeroEscolhido" min="1" max="10" placeholder="Ex: 7" class="w-full px-4 py-3 rounded-lg bg-escuro border border-[#334155] focus:outline-none focus:border-primario">
+                    <input type="number" id="numeroEscolhido" min="1" max="10" placeholder="Coloque aqui o seu número" class="w-full px-4 py-3 rounded-lg bg-escuro border border-[#334155] focus:outline-none focus:border-primario">
                 </div>
                 <button id="btnConfirmar" class="w-full bg-primario hover:bg-[#0F4CD0] text-white font-bold py-3 px-6 rounded-lg transition-all">
                     Confirmar Escolha
@@ -369,6 +369,13 @@ function gerarGradeNumeros() {
 btnConfirmar.addEventListener('click', () => {
     const nome = nomeParticipante.value.trim();
     const numero = parseInt(numeroEscolhido.value);
+    const totalVendidosAtual = Object.keys(participantes).length;
+
+    if(totalVendidosAtual >= TOTAL_NUMEROS) {
+        mensagemParticipante.textContent = 'Todos os números já foram vendidos!';
+        mensagemParticipante.className = 'text-center mt-3 text-sm text-aviso';
+        return;
+    }
 
     if(!nome) {
         mensagemParticipante.textContent = 'Digite seu nome!';
@@ -594,6 +601,6 @@ btnFechar.addEventListener('click', () => {
 // --------------------------
 gerarGradeNumeros();
 atualizarDadosPainel();
-</script>
+    </script>
 </body>
 </html>
