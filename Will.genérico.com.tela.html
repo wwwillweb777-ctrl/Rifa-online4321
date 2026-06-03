@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifas Eletrônicas - Will.Rifas123.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primario: '#165DFF',
+                        secundario: '#7B2FFD',
+                        escuro: '#0F172A',
+                        claro: '#F8FAFC',
+                        aviso: '#EF4444',
+                        sucesso: '#10B981',
+                        tampado: '#334155',
+                        pretoFundo: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .cartao {
+                @apply w-full h-24 bg-escuro rounded-xl border-2 border-tampado flex flex-col items-center justify-center p-4 transition-all duration-300;
+            }
+            .cartao-aberto {
+                @apply border-primario shadow-lg shadow-primario/20;
+            }
+            .cartao-vendido {
+                @apply bg-[#1E293B] border-secundario/50;
+            }
+            .cartao-disponivel {
+                @apply hover:border-claro hover:bg-[#273449] cursor-pointer;
+            }
+            .piscando {
+                animation: piscar 0.4s infinite alternate;
+            }
+            .circulo-sorteio {
+                @apply w-80 h-80 rounded-full flex flex-col items-center justify-center relative overflow-hidden mx-auto;
+                background-color: #000000;
+                border-width: 4px;
+                animation: bordasCores 0.6s infinite alternate;
+            }
+            .numero-rodando {
+                @apply text-8xl font-black text-red-600;
+                letter-spacing: 10px;
+            }
+            .dados-rodando {
+                @apply text-xl font-semibold text-white mt-2;
+            }
+            .tempo-display {
+                @apply text-5xl font-bold text-white mt-4;
+            }
+            .tela-ganhador-animada {
+                border-width: 4px;
+                animation: bordasCoresTela 0.6s infinite alternate;
+            }
+            .conteudo-ganhador {
+                border-width: 2px;
+                animation: bordasCoresConteudo 0.8s infinite alternate;
+            }
+            /* Faixa superior com animação configurada */
+            .faixa-superior {
+                border-width: 2px;
+                animation: bordasCoresFaixa 0.7s infinite alternate;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            .texto-animado {
+                display: inline-block;
+                animation: movimento 12s linear infinite;
+                font-size: 1.375rem; /* Aumentei o tamanho da fonte */
+                line-height: 2rem;
+            }
+        }
+
+        @keyframes piscar {
+            0% { opacity: 1; }
+            100% { opacity: 0.35; }
+        }
+        @keyframes bordasCores {
+            0% { border-color: #EF4444; box-shadow: 0 0 20px #EF4444; }
+            25% { border-color: #165DFF; box-shadow: 0 0 20px #165DFF; }
+            50% { border-color: #10B981; box-shadow: 0 0 20px #10B981; }
+            75% { border-color: #F59E0B; box-shadow: 0 0 20px #F59E0B; }
+            100% { border-color: #7B2FFD; box-shadow: 0 0 20px #7B2FFD; }
+        }
+        @keyframes bordasCoresTela {
+            0% { border-color: #EF4444; box-shadow: 0 0 30px #EF4444; }
+            25% { border-color: #165DFF; box-shadow: 0 0 30px #165DFF; }
+            50% { border-color: #10B981; box-shadow: 0 0 30px #10B981; }
+            75% { border-color: #F59E0B; box-shadow: 0 0 30px #F59E0B; }
+            100% { border-color: #7B2FFD; box-shadow: 0 0 30px #7B2FFD; }
+        }
+        @keyframes bordasCoresConteudo {
+            0% { border-color: #EF4444; }
+            25% { border-color: #165DFF; }
+            50% { border-color: #10B981; }
+            75% { border-color: #F59E0B; }
+            100% { border-color: #7B2FFD; }
+        }
+        @keyframes bordasCoresFaixa {
+            0% { border-color: #FFFFFF; box-shadow: 0 0 15px #FFFFFF; }
+            25% { border-color: #165DFF; box-shadow: 0 0 15px #165DFF; }
+            50% { border-color: #7B2FFD; box-shadow: 0 0 15px #7B2FFD; }
+            75% { border-color: #10B981; box-shadow: 0 0 15px #10B981; }
+            100% { border-color: #EF4444; box-shadow: 0 0 15px #EF4444; }
+        }
+        /* ANIMAÇÃO CORRIGIDA: TAMANHO SEMPRE IGUAL, SÓ MOVIMENTA */
+        @keyframes movimento {
+            0% {
+                transform: translateX(120%); /* Começa fora da tela à direita */
+                opacity: 0;
+            }
+            10% {
+                transform: translateX(100%);
+                opacity: 0.3;
+            }
+            20% {
+                transform: translateX(80%);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateX(60%);
+                opacity: 0.7;
+            }
+            40% {
+                transform: translateX(40%);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateX(20%);
+                opacity: 1; /* Totalmente visível e tamanho fixo */
+            }
+            60% {
+                transform: translateX(0%);
+                opacity: 1; /* Mantém o tamanho e a opacidade iguais */
+            }
+            70% {
+                transform: translateX(-20%);
+                opacity: 1; /* Sempre o mesmo tamanho */
+            }
+            80% {
+                transform: translateX(-40%);
+                opacity: 0.9;
+            }
+            90% {
+                transform: translateX(-60%);
+                opacity: 0.7;
+            }
+            95% {
+                transform: translateX(-80%);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateX(-120%); /* Sai da tela à esquerda */
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-escuro text-claro min-h-screen p-4">
+
+    <!-- FAIXA SUPERIOR COM TEXTO EM MOVIMENTO -->
+    <div class="faixa-superior bg-[#1E293B] rounded-xl py-4 px-6 mb-8">
+        <h3 class="texto-animado font-bold text-white">Will.Rifas123.com</h3>
+    </div>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Abas de Navegação -->
+        <div class="flex justify-center mb-8 border-b border-[#334155]">
+            <button id="btnParticipante" class="px-6 py-3 font-bold text-lg border-b-2 border-primario -mb-px">
+                <i class="fa fa-user mr-2"></i> ÁREA DO PARTICIPANTE
+            </button>
+            <button id="btnSorteador" class="px-6 py-3 font-bold text-lg text-gray-400">
+                <i class="fa fa-user-secret mr-2"></i> ÁREA DO SORTEADOR
+            </button>
+        </div>
+
+
+        <!-- ÁREA DO PARTICIPANTE -->
+        <div id="areaParticipante" class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-6">
+                ESCOLHA SEU NÚMERO - RIFAS DE 10 NÚMEROS
+            </h2>
+
+            <!-- Formulário -->
+            <div class="max-w-md mx-auto bg-[#1E293B] rounded-xl p-6 mb-8 border border-[#334155]">
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2">Seu Nome</label>
+                    <input type="text" id="nomeParticipante" placeholder="Digite seu nome" class="w-full px-4 py-3 rounded-lg bg-escuro border border-[#334155] focus:outline-none focus:border-primario">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2">Escolha um número (1 a 10)</label>
+                    <input type="number" id="numeroEscolhido" min="1" max="10" placeholder="Ex: 7" class="w-full px-4 py-3 rounded-lg bg-escuro border border-[#334155] focus:outline-none focus:border-primario">
+                </div>
+                <button id="btnConfirmar" class="w-full bg-primario hover:bg-[#0F4CD0] text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    Confirmar Escolha
+                </button>
+                <p id="mensagemParticipante" class="text-center mt-3 text-sm"></p>
+            </div>
+
+            <!-- Grade de Números -->
+            <h3 class="text-xl font-bold text-center mb-4">Todos os números (tampados)</h3>
+            <div class="grid grid-cols-5 gap-4 max-w-6xl mx-auto" id="gradeNumeros"></div>
+        </div>
+
+
+        <!-- ÁREA DO SORTEADOR -->
+        <div id="areaSorteador" class="hidden mb-12">
+            <h2 class="text-2xl font-bold text-center mb-6">PAINEL DAS RIFAS</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-[#1E293B] rounded-xl p-4 border border-[#334155] text-center">
+                    <p class="text-gray-400 text-sm">Números vendidos</p>
+                    <p id="totalVendidos" class="text-3xl font-bold text-primario">0</p>
+                </div>
+                <div class="bg-[#1E293B] rounded-xl p-4 border border-[#334155] text-center">
+                    <p class="text-gray-400 text-sm">Números disponíveis</p>
+                    <p id="totalDisponiveis" class="text-3xl font-bold text-secundario">10</p>
+                </div>
+                <div class="bg-[#1E293B] rounded-xl p-4 border border-[#334155] text-center">
+                    <p class="text-gray-400 text-sm">Situação</p>
+                    <p id="situacaoSorteio" class="text-xl font-bold text-aviso">Aguardando</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button id="btnIniciar" class="bg-sucesso hover:bg-[#059669] text-white font-bold py-3 px-8 rounded-xl">
+                    INICIAR SORTEIO
+                </button>
+                <button id="btnReiniciar" class="bg-[#334155] hover:bg-[#475569] text-white font-bold py-3 px-8 rounded-xl">
+                    REINICIAR SISTEMA
+                </button>
+            </div>
+
+            <!-- Círculo do Sorteio -->
+            <h3 class="text-xl font-bold text-center mb-4">SORTEANDO AGORA</h3>
+            <div class="flex flex-col items-center justify-center mb-8">
+                <p class="text-gray-300 mb-2">Tempo restante:</p>
+                <div id="contadorTempo" class="tempo-display">1:00</div>
+                
+                <div id="circuloSorteio" class="circulo-sorteio mt-4">
+                    <span id="nomeAtual" class="dados-rodando">NOME</span>
+                    <span id="numeroAtual" class="numero-rodando mt-2">1</span>
+                    <span id="idAtual" class="dados-rodando mt-2">ID</span>
+                </div>
+            </div>
+
+            <!-- Tela do Ganhador -->
+            <div id="telaGanhador" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+                <div class="bg-[#1E293B] rounded-2xl p-8 max-w-md w-full text-center tela-ganhador-animada shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-6 text-aviso">🏆 GANHADOR 🏆</h2>
+                    <div class="bg-pretoFundo rounded-xl p-8 mb-6 conteudo-ganhador">
+                        <p class="text-sm text-gray-400 mb-2">ID DO PARTICIPANTE</p>
+                        <p id="dadosId" class="text-xl font-bold text-white mb-4"></p>
+                        
+                        <p class="text-sm text-gray-400 mb-2">NÚMERO SORTEADO</p>
+                        <p id="dadosNumero" class="text-7xl font-black text-aviso mb-4"></p>
+                        
+                        <p class="text-sm text-gray-400 mb-2">NOME DO GANHADOR</p>
+                        <p id="dadosNome" class="text-2xl font-semibold text-white"></p>
+                    </div>
+                    <button id="btnFechar" class="bg-aviso hover:bg-[#DC2626] text-white font-bold py-3 px-10 rounded-xl text-lg transition-all">
+                        FECHAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações do sistema
+        const TOTAL_NUMEROS = 10;
+        const PROBABILIDADE_POR_NUMERO = 4; // 4% de chance para cada número
+        const TEMPO_TOTAL = 60; // Tempo total do sorteio em segundos
+
+        // Variáveis globais
+        let participantes = {};
+        let sorteioAtivo = false;
+let idContador = 1;
+let tempoRestante = TEMPO_TOTAL;
+let intervaloTempo;
+let intervaloSorteio;
+let numerosDisponiveis = [];
+
+// Elementos da página
+const areaParticipante = document.getElementById('areaParticipante');
+const areaSorteador = document.getElementById('areaSorteador');
+const btnParticipante = document.getElementById('btnParticipante');
+const btnSorteador = document.getElementById('btnSorteador');
+const nomeParticipante = document.getElementById('nomeParticipante');
+const numeroEscolhido = document.getElementById('numeroEscolhido');
+const btnConfirmar = document.getElementById('btnConfirmar');
+const mensagemParticipante = document.getElementById('mensagemParticipante');
+const gradeNumeros = document.getElementById('gradeNumeros');
+const totalVendidos = document.getElementById('totalVendidos');
+const totalDisponiveis = document.getElementById('totalDisponiveis');
+const situacaoSorteio = document.getElementById('situacaoSorteio');
+const btnIniciar = document.getElementById('btnIniciar');
+const btnReiniciar = document.getElementById('btnReiniciar');
+const contadorTempo = document.getElementById('contadorTempo');
+const nomeAtual = document.getElementById('nomeAtual');
+const numeroAtual = document.getElementById('numeroAtual');
+const idAtual = document.getElementById('idAtual');
+const telaGanhador = document.getElementById('telaGanhador');
+const dadosId = document.getElementById('dadosId');
+const dadosNumero = document.getElementById('dadosNumero');
+const dadosNome = document.getElementById('dadosNome');
+
+// Troca entre as áreas
+btnParticipante.addEventListener('click', () => {
+    areaParticipante.classList.remove('hidden');
+    areaSorteador.classList.add('hidden');
+    btnParticipante.classList.add('border-primario', 'text-claro');
+    btnSorteador.classList.remove('border-primario', 'text-claro');
+    btnSorteador.classList.add('text-gray-400');
+});
+
+btnSorteador.addEventListener('click', () => {
+    areaParticipante.classList.add('hidden');
+    areaSorteador.classList.remove('hidden');
+    btnSorteador.classList.add('border-primario', 'text-claro');
+    btnParticipante.classList.remove('border-primario', 'text-claro');
+    btnParticipante.classList.add('text-gray-400');
+    atualizarDadosPainel();
+});
+
+
+// --------------------------
+// GERAR GRADE DE NÚMEROS
+// --------------------------
+function gerarGradeNumeros() {
+    gradeNumeros.innerHTML = '';
+    for(let i = 1; i <= TOTAL_NUMEROS; i++) {
+        const cartao = document.createElement('div');
+        cartao.className = 'cartao cartao-disponivel';
+        cartao.dataset.numero = i;
+
+        cartao.innerHTML = `
+            <i class="fa fa-lock text-2xl text-tampado mb-2"></i>
+            <p class="text-sm text-gray-400">Número: ${i}</p>
+            <p class="text-xs text-gray-500">(TAMPADO)</p>
+        `;
+
+        cartao.addEventListener('click', () => {
+            if(!participantes[i] && !sorteioAtivo) {
+                numeroEscolhido.value = i;
+            }
+        });
+
+        gradeNumeros.appendChild(cartao);
+    }
+}
+
+
+// --------------------------
+// CONFIRMAR ESCOLHA DO NÚMERO
+// --------------------------
+btnConfirmar.addEventListener('click', () => {
+    const nome = nomeParticipante.value.trim();
+    const numero = parseInt(numeroEscolhido.value);
+
+    if(!nome) {
+        mensagemParticipante.textContent = 'Digite seu nome!';
+        mensagemParticipante.className = 'text-center mt-3 text-sm text-aviso';
+        return;
+    }
+    if(!numero || numero < 1 || numero > TOTAL_NUMEROS) {
+        mensagemParticipante.textContent = 'Escolha um número entre 1 e 10!';
+        mensagemParticipante.className = 'text-center mt-3 text-sm text-aviso';
+        return;
+    }
+    if(participantes[numero]) {
+        mensagemParticipante.textContent = 'Esse número já foi escolhido! Escolha outro.';
+        mensagemParticipante.className = 'text-center mt-3 text-sm text-aviso';
+        return;
+    }
+    if(sorteioAtivo) {
+        mensagemParticipante.textContent = 'O sorteio já começou! Não é mais possível escolher.';
+        mensagemParticipante.className = 'text-center mt-3 text-sm text-aviso';
+        return;
+    }
+
+    // Salva os dados do participante
+    const id = `ID${idContador.toString().padStart(3, '0')}`;
+    participantes[numero] = {
+        id: id,
+        nome: nome
+    };
+    idContador++;
+
+    // Atualiza o cartão com as informações
+    atualizarCartao(numero, id, nome);
+
+    mensagemParticipante.textContent = `Sucesso! Você escolheu o número ${numero}. Seu ID: ${id}`;
+    mensagemParticipante.className = 'text-center mt-3 text-sm text-sucesso';
+
+    // Limpa os campos
+    nomeParticipante.value = '';
+    numeroEscolhido.value = '';
+
+    // Atualiza o painel se estiver aberto
+    if(!areaSorteador.classList.contains('hidden')) {
+        atualizarDadosPainel();
+    }
+});
+
+
+// --------------------------
+// ATUALIZAR CARTÃO DO NÚMERO
+// --------------------------
+function atualizarCartao(numero, id, nome) {
+    const cartao = document.querySelector(`[data-numero="${numero}"]`);
+    if(cartao) {
+        cartao.className = 'cartao cartao-vendido cartao-aberto';
+        cartao.innerHTML = `
+            <p class="text-xs text-gray-400 mb-1">Número ${numero}</p>
+            <p class="text-sm font-bold text-primario mb-1">${id}</p>
+            <p class="text-xs text-claro">${nome}</p>
+        `;
+    }
+}
+
+
+// --------------------------
+// ATUALIZAR DADOS DO PAINEL
+// --------------------------
+function atualizarDadosPainel() {
+    const totalVendidosValor = Object.keys(participantes).length;
+    const totalDisponiveisValor = TOTAL_NUMEROS - totalVendidosValor;
+
+    totalVendidos.textContent = totalVendidosValor;
+    totalDisponiveis.textContent = totalDisponiveisValor;
+
+    if(sorteioAtivo) {
+        situacaoSorteio.textContent = 'SORTEANDO...';
+        situacaoSorteio.className = 'text-xl font-bold text-sucesso';
+    } else if(totalVendidosValor === TOTAL_NUMEROS) {
+        situacaoSorteio.textContent = 'TODOS VENDIDOS';
+        situacaoSorteio.className = 'text-xl font-bold text-primario';
+    } else {
+        situacaoSorteio.textContent = 'AGUARDANDO INÍCIO';
+        situacaoSorteio.className = 'text-xl font-bold text-aviso';
+    }
+}
+
+
+// --------------------------
+// SISTEMA DE SORTEIO COM PROBABILIDADE JUSTA DE 4%
+// --------------------------
+function iniciarSorteio() {
+    const totalVendidos = Object.keys(participantes).length;
+
+    if(totalVendidos === 0) {
+        alert('Ainda não há números vendidos! Aguarde as compras.');
+        return;
+    }
+
+    if(sorteioAtivo) return;
+
+    sorteioAtivo = true;
+    numerosDisponiveis = Object.keys(participantes).map(n => parseInt(n));
+    tempoRestante = TEMPO_TOTAL;
+    atualizarContadorTempo();
+    atualizarDadosPainel();
+
+    // Função para sortear um número com 4% de chance para cada um
+    function sortearNumero() {
+        // Gera um valor aleatório entre 0 e 100
+        const valorAleatorio = Math.random() * 100;
+        let acumulado = 0;
+
+        // Verifica qual número foi sorteado com base na probabilidade
+        for(let i = 0; i < numerosDisponiveis.length; i++) {
+            acumulado += PROBABILIDADE_POR_NUMERO;
+            if(valorAleatorio <= acumulado) {
+                return numerosDisponiveis[i];
+            }
+        }
+        // Se por acaso não cair em nenhum, retorna o primeiro como fallback
+        return numerosDisponiveis[0];
+    }
+
+    // Animação rápida dos dados durante o sorteio
+    intervaloSorteio = setInterval(() => {
+        const numeroSorteado = sortearNumero();
+        const dados = participantes[numeroSorteado];
+
+        nomeAtual.textContent = dados.nome;
+        idAtual.textContent = dados.id;
+        numeroAtual.textContent = numeroSorteado;
+
+    }, 25); // Velocidade da animação
+
+    // Contador de tempo regressivo
+    intervaloTempo = setInterval(() => {
+        tempoRestante--;
+        atualizarContadorTempo();
+
+        if(tempoRestante <= 0) {
+            pararSorteio();
+        }
+    }, 1000);
+}
+
+
+// --------------------------
+// ATUALIZAR CONTADOR DE TEMPO
+// --------------------------
+function atualizarContadorTempo() {
+    const minutos = Math.floor(tempoRestante / 60);
+    const segundos = tempoRestante % 60;
+    contadorTempo.textContent = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+}
+
+
+// --------------------------
+// PARAR SORTEIO E DEFINIR GANHADOR
+// --------------------------
+function pararSorteio() {
+    clearInterval(intervaloSorteio);
+    clearInterval(intervaloTempo);
+
+    // Sorteia o número final com a mesma regra de probabilidade
+    const valorAleatorio = Math.random() * 100;
+    let acumulado = 0;
+    let numeroVencedor;
+
+    for(let i = 0; i < numerosDisponiveis.length; i++) {
+        acumulado += PROBABILIDADE_POR_NUMERO;
+        if(valorAleatorio <= acumulado) {
+            numeroVencedor = numerosDisponiveis[i];
+            break;
+        }
+    }
+
+    const dadosGanhador = participantes[numeroVencedor];
+
+    // Mostra os dados finais
+    nomeAtual.textContent = dadosGanhador.nome;
+    idAtual.textContent = dadosGanhador.id;
+    numeroAtual.textContent = numeroVencedor;
+
+    // Preenche a tela de resultado
+    dadosId.textContent = dadosGanhador.id;
+    dadosNumero.textContent = numeroVencedor;
+    dadosNome.textContent = dadosGanhador.nome;
+
+    // Exibe a tela do ganhador
+    telaGanhador.classList.remove('hidden');
+
+    sorteioAtivo = false;
+    atualizarDadosPainel();
+}
+
+
+// --------------------------
+// BOTÕES DE AÇÃO
+// --------------------------
+btnIniciar.addEventListener('click', iniciarSorteio);
+
+btnReiniciar.addEventListener('click', () => {
+    if(confirm('Tem certeza que deseja reiniciar? Todos os dados serão apagados!')) {
+        clearInterval(intervaloSorteio);
+        clearInterval(intervaloTempo);
+        participantes = {};
+        sorteioAtivo = false;
+        idContador = 1;
+        tempoRestante = TEMPO_TOTAL;
+        contadorTempo.textContent = '1:00';
+        telaGanhador.classList.add('hidden');
+        gerarGradeNumeros();
+        atualizarDadosPainel();
+    }
+});
+
+btnFechar.addEventListener('click', () => {
+    telaGanhador.classList.add('hidden');
+});
+
+
+// --------------------------
+// INICIAR SISTEMA
+// --------------------------
+gerarGradeNumeros();
+atualizarDadosPainel();
+</script>
+</body>
+</html>
