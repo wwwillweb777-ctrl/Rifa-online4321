@@ -440,7 +440,7 @@ function irPara(pagina) {
 <!-- 🔥 FIREBASE — PROJETO NOVO -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getDatabase, ref, get, set, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+import { getDatabase, ref, set, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDw8DczcbV83UEgmEoUI0iLkNueqwD0Bs8",
@@ -455,17 +455,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const estatisticasRef = ref(db, "estatisticas");
-const visitantesRef = ref(db, "visitantes");
-
-function obterCodigoVisitante() {
-    let codigo = sessionStorage.getItem("codigoVisitante");
-    if (!codigo) {
-        codigo = Math.random().toString(36).slice(2) + Date.now().toString(36);
-        sessionStorage.setItem("codigoVisitante", codigo);
-    }
-    return codigo;
-}
-const codigoUnico = obterCodigoVisitante();
 
 function formatarNumero(numero) {
     numero = Number(numero) || 0;
@@ -484,7 +473,6 @@ function atualizarTela(dados = { visitas: 0, curtidas: 0, naoCurtidas: 0 }) {
     const elCurtidas = document.getElementById("curtidas");
     const elNaoCurtidas = document.getElementById("naoCurtidas");
     const elBarra = document.getElementById("barra");
-    const elBloco = document.querySelector('.youtube-bloco');
 
     if (elViews) elViews.textContent = formatarNumero(v);
     if (elTextoViews) elTextoViews.textContent = "visualizações";
@@ -494,54 +482,22 @@ function atualizarTela(dados = { visitas: 0, curtidas: 0, naoCurtidas: 0 }) {
     const total = c + n;
     const porcentagem = total > 0 ? (c / total) * 100 : 0;
     if (elBarra) elBarra.style.width = `${porcentagem}%`;
-
-    if (elBloco) {
-        elBloco.style.cssText = `
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            pointer-events: auto !important;
-        `;
-    }
 }
 
-const verificarSeJaVotou = async () => {
-    try {
-        const snap = await get(ref(db, `visitantes/${codigoUnico}`));
-        const jaVotou = snap.exists() && snap.val().jaVotou;
-        const btnCurtir = document.getElementById("btnCurtir");
-        const btnNaoCurtir = document.getElementById("btnNaoCurtir");
-        
-        if (btnCurtir) {
-            btnCurtir.classList.toggle("desativado", jaVotou);
-            if (!jaVotou) btnCurtir.classList.remove("curtiu");
-        }
-        if (btnNaoCurtir) {
-            btnNaoCurtir.classList.toggle("desativado", jaVotou);
-            if (!jaVotou) btnNaoCurtir.classList.remove("naoCurtiu");
-        }
-    } catch (e) {
-        console.log("Erro ao verificar voto:", e);
-    }
-};
-
+// ✅ CADA ENTRADA = +1 VISITA
 const registrarAcesso = async () => {
     try {
-        const snap = await get(ref(db, `visitantes/${codigoUnico}`));
-        if (!snap.exists()) {
-            await set(ref(db, `visitantes/${codigoUnico}`), { jaVotou: false });
-            await runTransaction(estatisticasRef, (dados) => {
-                if (!dados) return { visitas: 1, curtidas: 0, naoCurtidas: 0 };
-                dados.visitas = (dados.visitas || 0) + 1;
-                return dados;
-            });
-        }
-        await verificarSeJaVotou();
+        await runTransaction(estatisticasRef, (dados) => {
+            if (!dados) return { visitas: 1, curtidas: 0, naoCurtidas: 0 };
+            dados.visitas = (dados.visitas || 0) + 1;
+            return dados;
+        });
     } catch (e) {
-        console.log("Erro de conexão:", e);
+        console.log("Erro ao registrar visita:", e);
     }
 };
 
+// ✅ ATUALIZA NÚMEROS EM TEMPO REAL
 onValue(estatisticasRef, (snap) => {
     const dados = snap.val();
     atualizarTela(dados || { visitas: 0, curtidas: 0, naoCurtidas: 0 });
@@ -549,12 +505,12 @@ onValue(estatisticasRef, (snap) => {
     console.log("Erro no Firebase:", erro);
 });
 
+// ✅ VOTOS SEM LIMITE — PODE VOTAR QUANTAS VEZES QUISER!
 document.addEventListener("click", async (e) => {
     if (e.target.closest("#btnCurtir")) {
         const btn = document.getElementById("btnCurtir");
-        if (btn && !btn.classList.contains("desativado")) {
+        if (btn) {
             try {
-                await set(ref(db, `visitantes/${codigoUnico}`), { jaVotou: true });
                 await runTransaction(estatisticasRef, (dados) => {
                     if (!dados) return { visitas: 1, curtidas: 1, naoCurtidas: 0 };
                     dados.curtidas = (dados.curtidas || 0) + 1;
@@ -562,7 +518,6 @@ document.addEventListener("click", async (e) => {
                 });
                 btn.classList.add("curtiu");
                 document.getElementById("btnNaoCurtir").classList.remove("naoCurtiu");
-                verificarSeJaVotou();
             } catch (erro) {
                 alert("Não foi possível registrar seu voto");
             }
@@ -571,9 +526,8 @@ document.addEventListener("click", async (e) => {
 
     if (e.target.closest("#btnNaoCurtir")) {
         const btn = document.getElementById("btnNaoCurtir");
-        if (btn && !btn.classList.contains("desativado")) {
+        if (btn) {
             try {
-                await set(ref(db, `visitantes/${codigoUnico}`), { jaVotou: true });
                 await runTransaction(estatisticasRef, (dados) => {
                     if (!dados) return { visitas: 1, curtidas: 0, naoCurtidas: 1 };
                     dados.naoCurtidas = (dados.naoCurtidas || 0) + 1;
@@ -581,16 +535,12 @@ document.addEventListener("click", async (e) => {
                 });
                 btn.classList.add("naoCurtiu");
                 document.getElementById("btnCurtir").classList.remove("curtiu");
-                verificarSeJaVotou();
             } catch (erro) {
                 alert("Não foi possível registrar seu voto");
             }
         }
     }
 });
-
-window.addEventListener('pageshow', () => atualizarTela());
-window.addEventListener('focus', () => atualizarTela());
 
 document.addEventListener('DOMContentLoaded', () => {
     atualizarTela({ visitas: 0, curtidas: 0, naoCurtidas: 0 });
