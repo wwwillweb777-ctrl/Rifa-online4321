@@ -336,7 +336,6 @@
     </style>
 </head>
 <body>
-<script src="config.js"></script>
     
     <!-- 🚩 LETREIRO -->
     <div class="faixa-letreiro">
@@ -364,9 +363,8 @@
         <button class="botao-menu" onclick="abrirMenu()">&#9776;</button>
     </div>
 
-    <!-- 🦁 CONTEÚDO — IMAGEM ATUALIZADA ✅ -->
+    <!-- 🦁 CONTEÚDO -->
     <div class="conteudo">
-        <!-- ✅ NOVO LINK DA IMAGEM -->
         <img src="https://i.postimg.cc/j2bPB8BQ/IMG-20260813-210508-(1)-(1)-(1).webp" alt="WC Construções" class="logo-principal">
 
         <div class="texto-inferior">
@@ -439,19 +437,19 @@ function irPara(pagina) {
 }
 </script>
 
-<!-- 🔥 FIREBASE -->
+<!-- 🔥 FIREBASE — PROJETO NOVO -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getDatabase, ref, get, set, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getDatabase, ref, get, set, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: window.MINHA_CHAVE,
-  authDomain: "willobras.firebaseapp.com",
-  databaseURL: "https://willobras-default-rtdb.firebaseio.com",
-  projectId: "willobras",
-  storageBucket: "willobras.firebasestorage.app",
-  messagingSenderId: "66370500400",
-  appId: "1:66370500400:web:42d6569ca2c8172ddf3af5"
+  apiKey: "AIzaSyDw8DczcbV83UEgmEoUI0iLkNueqwD0Bs8",
+  authDomain: "site-wc-construcoes.firebaseapp.com",
+  databaseURL: "https://site-wc-construcoes-default-rtdb.firebaseio.com",
+  projectId: "site-wc-construcoes",
+  storageBucket: "site-wc-construcoes.firebasestorage.app",
+  messagingSenderId: "464606883726",
+  appId: "1:464606883726:web:ad6e071b9611de879abedf"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -491,7 +489,7 @@ function atualizarTela(dados = { visitas: 0, curtidas: 0, naoCurtidas: 0 }) {
     if (elViews) elViews.textContent = formatarNumero(v);
     if (elTextoViews) elTextoViews.textContent = "visualizações";
     if (elCurtidas) elCurtidas.textContent = formatarNumero(c);
-    if (elNaoCurtidas) elNaoCurtidas.textContent = "0";
+    if (elNaoCurtidas) elNaoCurtidas.textContent = formatarNumero(n);
 
     const total = c + n;
     const porcentagem = total > 0 ? (c / total) * 100 : 0;
