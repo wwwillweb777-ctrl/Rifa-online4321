@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nossos Trabalhos — WC Construções</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: none;
+                overscroll-behavior: none;
+                touch-action: none;
+            }
+            body {
+                background-color: #0a2463;
+                font-family: sans-serif;
+                overflow-x: hidden;
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            .cabecalho {
+                background-color: #0a2463;
+                width: 100%;
+                padding: 15px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: sticky;
+                top: 0;
+                z-index: 9999;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+
+            .botao-voltar {
+                background: transparent;
+                border: none;
+                font-size: 1.6rem;
+                cursor: pointer;
+                color: #39ff14;
+                line-height: 1;
+            }
+
+            .titulo-pagina {
+                color: #ffffff;
+                font-size: 1.35rem;
+                font-weight: bold;
+            }
+
+            .conteudo {
+                padding: 25px 20px 40px 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 25px;
+            }
+
+            .imagem-trabalho {
+                width: 100%;
+                max-width: 600px;
+                height: auto;
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+                object-fit: contain;
+            }
+
+            .caixa-texto {
+                background-color: #051a48;
+                border-radius: 16px;
+                padding: 25px;
+                width: 100%;
+                max-width: 600px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            }
+
+            .texto-descricao {
+                color: #e2e4ec;
+                font-size: 1.08rem;
+                line-height: 1.7;
+                text-align: justify;
+            }
+
+            .destaque {
+                color: #39ff14;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🧩 CABEÇALHO -->
+    <div class="cabecalho">
+        <button class="botao-voltar" onclick="voltarPagina()">&#8592;</button>
+        <h1 class="titulo-pagina">Nossos Trabalhos</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <!-- 🦁 CONTEÚDO -->
+    <div class="conteudo">
+        <!-- ✅ IMAGEM DO SERVIÇO -->
+        <img src="https://i.postimg.cc/0NvvM7gG/IMG-20260813-170238-(1)-(1).webp" alt="Serviço executado na Honda em Betim" class="imagem-trabalho">
+
+        <!-- ✅ TEXTO DESCRITIVO -->
+        <div class="caixa-texto">
+            <p class="texto-descricao">
+                Este serviço foi executado nas instalações da <span class="destaque">Honda</span>, localizada na cidade de <span class="destaque">Betim — Minas Gerais</span>.
+                <br><br>
+                Mais um trabalho realizado com toda a qualidade, segurança e compromisso que você já conhece da WC Construções. Respeitando prazos, normas e entregando sempre o melhor resultado.
+            </p>
+        </div>
+    </div>
+
+<!-- ⚡ FUNÇÃO VOLTAR -->
+<script>
+function voltarPagina() {
+    window.history.back();
+}
+</script>
+
+</body>
+</html>
